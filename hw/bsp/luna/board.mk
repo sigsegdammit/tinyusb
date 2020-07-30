@@ -30,7 +30,7 @@ INC += \
 	$(TOP)/hw/mcu/microchip/samd/asf4/samd21/hri \
 	$(TOP)/hw/mcu/microchip/samd/asf4/samd21/CMSIS/Include
 
-# For TinyUSB port source 
+# For TinyUSB port source
 VENDOR = microchip
 CHIP_FAMILY = samd
 
@@ -41,11 +41,7 @@ FREERTOS_PORT = ARM_CM0
 JLINK_DEVICE = ATSAMD21G18
 JLINK_IF = swd
 
-# flash using bossac at least version 1.8
-# can be found in arduino15/packages/arduino/tools/bossac/
-# Add it to your PATH or change BOSSAC variable to match your installation
-BOSSAC = bossac
-
+# flash using jlink
 flash: $(BUILD)/$(BOARD)-firmware.bin
-	@:$(call check_defined, SERIAL, example: SERIAL=/dev/ttyACM0)
-	$(BOSSAC) --port=$(SERIAL) -U -i --offset=0x2000 -e -w $^ -R
+	dfu-util -a 0 -d 1d50:615c -D $< || dfu-util -a 0 -d 16d0:05a5 -D $<
+
