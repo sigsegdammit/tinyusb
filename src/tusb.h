@@ -68,6 +68,10 @@
     #include "class/hid/hid_device.h"
   #endif
 
+  #if CFG_TUD_AUDIO
+    #include "class/audio/audio_device.h"
+  #endif
+
   #if CFG_TUD_CDC
     #include "class/cdc/cdc_device.h"
   #endif

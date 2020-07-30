@@ -52,6 +52,9 @@
 #define U32_B3_U8(u32)        ((uint8_t) (((u32) >>  8) & 0x000000ff))
 #define U32_B4_U8(u32)        ((uint8_t) ((u32)         & 0x000000ff)) // LSB
 
+#define U24_TO_U8S_BE(u32)    U32_B1_U8(u32), U32_B2_U8(u32), U32_B3_U8(u32)
+#define U24_TO_U8S_LE(u32)    U32_B4_U8(u32), U32_B3_U8(u32), U32_B2_U8(u32)
+
 #define U32_TO_U8S_BE(u32)    U32_B1_U8(u32), U32_B2_U8(u32), U32_B3_U8(u32), U32_B4_U8(u32)
 #define U32_TO_U8S_LE(u32)    U32_B4_U8(u32), U32_B3_U8(u32), U32_B2_U8(u32), U32_B1_U8(u32)
 

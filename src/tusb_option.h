@@ -194,6 +194,10 @@
   #define CFG_TUD_ENDPOINT0_SIZE  64
 #endif
 
+#ifndef CFG_TUD_AUDIO
+  #define CFG_TUD_AUDIO           0
+#endif
+
 #ifndef CFG_TUD_CDC
   #define CFG_TUD_CDC             0
 #endif
