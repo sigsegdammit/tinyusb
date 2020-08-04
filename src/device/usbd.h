@@ -276,7 +276,7 @@ TU_ATTR_WEAK bool tud_vendor_control_complete_cb(uint8_t rhport, tusb_control_re
   /* Output Terminal */\
 	9, TUSB_DESC_CS_INTERFACE, AUDIO_CS_INTERFACE_OUTPUT_TERMINAL, _tid, U16_TO_U8S_LE(_type), 0, _sid, 0
 
-#define TUD_AUDIO_STREAMING_INTF_LEN (9 + 9 + 8 + 11 + 9 + 7)
+#define TUD_AUDIO_STREAMING_INTF_LEN (9 + 9 + 7 + 11 + 9 + 7)
 #define TUD_AUDIO_STREAMING_INTF(_itfnum, _stridx, _tid, _ch, _ep, _epsize) \
   /* Standard AS Interface - Alt 0*/\
   9, TUSB_DESC_INTERFACE, _itfnum, 0, 0, TUSB_CLASS_AUDIO, AUDIO_SUBCLASS_STREAMING, 0, _stridx, \
