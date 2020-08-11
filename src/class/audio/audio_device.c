@@ -274,7 +274,7 @@ bool audiod_control_request(uint8_t rhport, tusb_control_request_t const * reque
     }
 
     // Unsupported request
-    tu_printf( "Unhandled control request: 0x%04x\n", request->bRequest );
+    tu_printf( "Unhandled ctrl req: 0x%04x\n", request->bRequest );
     return false;
   }
 
@@ -292,7 +292,7 @@ bool audiod_control_request(uint8_t rhport, tusb_control_request_t const * reque
 
     /* Notes: Volume min/max is signed fixed point 16.16, so max should be 0, min 0x8001 ( -127.9961 dB )
     *        Mute only supports CUR, no MIN/MAX
-    *        EP control requests are sample rate, and support CUR, MIN, MAX ( and RES? )
+    *        EP control requests are sample rate, and support CUR, MIN, MAX
     */
 
     switch ( request->bRequest )
@@ -378,7 +378,7 @@ bool audiod_xfer_cb(uint8_t rhport, uint8_t ep_addr, xfer_result_t result, uint3
 {
   (void) result;
 
-  tu_printf( "audiod_xfer_cb\n" );
+  //tu_printf( "audiod_xfer_cb\n" );
 
   uint8_t itf = 0;
   audiod_interface_t* p_audio = _audiod_itf;
