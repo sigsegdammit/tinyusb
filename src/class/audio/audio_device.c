@@ -94,7 +94,7 @@ static bool maybe_transmit(audiod_interface_t* audio, uint8_t itf_index)
 //--------------------------------------------------------------------+
 void audiod_init(void)
 {
-  tu_printf( "audiod_init\n" );
+  TU_LOG1( "audiod_init\n" );
 
   tu_memclr(_audiod_itf, sizeof(_audiod_itf));
 
@@ -113,7 +113,7 @@ void audiod_init(void)
 
 void audiod_reset(uint8_t rhport)
 {
-  tu_printf( "audiod_reset\n" );
+  TU_LOG1( "audiod_reset\n" );
 
   (void) rhport;
 
@@ -126,7 +126,7 @@ void audiod_reset(uint8_t rhport)
 
 uint16_t audiod_open(uint8_t rhport, tusb_desc_interface_t const * desc_itf, uint16_t max_len)
 {
-  tu_printf( "audiod_open\n" );
+  TU_LOG1( "audiod_open\n" );
 
   // 1st interface is Audio Control 
   TU_VERIFY(TUSB_CLASS_AUDIO       == desc_itf->bInterfaceClass    &&
@@ -217,7 +217,7 @@ bool audiod_control_complete(uint8_t rhport, tusb_control_request_t const * requ
     const uint8_t ctrl_id = request->wValue >> 8;
     const uint8_t chan_id = request->wIndex & 0xff;
 
-    //tu_printf( "audiod_control_complete: 0x%02x 0x%02x 0x%02x 0x%02x\n", request->bRequest, term_id, ctrl_id, chan_id );
+    //TU_LOG1( "audiod_control_complete: 0x%02x 0x%02x 0x%02x 0x%02x\n", request->bRequest, term_id, ctrl_id, chan_id );
 
     if ( request->bRequest == AUDIO_REQUEST_SET_CURRENT_VALUE )
     {
@@ -274,7 +274,7 @@ bool audiod_control_request(uint8_t rhport, tusb_control_request_t const * reque
     }
 
     // Unsupported request
-    tu_printf( "Unhandled ctrl req: 0x%04x\n", request->bRequest );
+    TU_LOG1( "Unhandled ctrl req: 0x%04x\n", request->bRequest );
     return false;
   }
 
@@ -288,7 +288,7 @@ bool audiod_control_request(uint8_t rhport, tusb_control_request_t const * reque
     const uint8_t chan_id = request->wIndex & 0xff;
     uint8_t len = sizeof(_audio_ctrl_data);
 
-    //tu_printf( "CTRL: 0x%02x 0x%02x 0x%02x 0x%02x\n", request->bRequest, term_id, ctrl_id, chan_id );
+    //TU_LOG1( "CTRL: 0x%02x 0x%02x 0x%02x 0x%02x\n", request->bRequest, term_id, ctrl_id, chan_id );
 
     /* Notes: Volume min/max is signed fixed point 16.16, so max should be 0, min 0x8001 ( -127.9961 dB )
     *        Mute only supports CUR, no MIN/MAX
@@ -351,7 +351,7 @@ bool audiod_control_request(uint8_t rhport, tusb_control_request_t const * reque
   }
   else if( request->bmRequestType_bit.recipient == TUSB_REQ_RCPT_ENDPOINT )
   {
-    tu_printf( "EP: 0x%02x 0x%04x 0x%04x\n", request->bRequest, request->wValue, request->wIndex );
+    TU_LOG1( "EP: 0x%02x 0x%04x 0x%04x\n", request->bRequest, request->wValue, request->wIndex );
 
     const uint8_t ctrl_id = request->wValue >> 8;
     const uint8_t ep = request->wIndex & 0xff;
@@ -378,7 +378,7 @@ bool audiod_xfer_cb(uint8_t rhport, uint8_t ep_addr, xfer_result_t result, uint3
 {
   (void) result;
 
-  //tu_printf( "audiod_xfer_cb\n" );
+  //TU_LOG1( "audiod_xfer_cb\n" );
 
   uint8_t itf = 0;
   audiod_interface_t* p_audio = _audiod_itf;
