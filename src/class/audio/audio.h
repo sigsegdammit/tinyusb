@@ -120,6 +120,52 @@ typedef enum{
 } audio_format_type_t;
 
 //--------------------------------------------------------------------+
+// Management Element Request (Control Endpoint)
+//--------------------------------------------------------------------+
+
+/// Audio Control
+typedef enum
+{
+  AUDIO_REQUEST_SET_CURRENT_VALUE                          = 0x01,
+  AUDIO_REQUEST_GET_CURRENT_VALUE                          = 0x81,
+
+  AUDIO_REQUEST_SET_MINIMUM_VALUE                          = 0x02,
+  AUDIO_REQUEST_GET_MINIMUM_VALUE                          = 0x82,
+
+  AUDIO_REQUEST_SET_MAXIMUM_VALUE                          = 0x03,
+  AUDIO_REQUEST_GET_MAXIMUM_VALUE                          = 0x83,
+
+  AUDIO_REQUEST_SET_RESOLUTION_VALUE                       = 0x04,
+  AUDIO_REQUEST_GET_RESOLUTION_VALUE                       = 0x84,
+
+  AUDIO_REQUEST_SET_MEM_VALUE                              = 0x05,
+  AUDIO_REQUEST_GET_MEM_VALUE                              = 0x85,
+
+  AUDIO_REQUEST_GET_STAT                                   = 0xff,
+}audio_management_request_t;
+
+/// Audio feture unit controls
+typedef enum
+{
+  AUDIO_FEATURE_UNIT_CTRL_MUTE                             = 0x01,
+  AUDIO_FEATURE_UNIT_CTRL_VOLUME                           = 0x02,
+  AUDIO_FEATURE_UNIT_CTRL_BASS                             = 0x03,
+  AUDIO_FEATURE_UNIT_CTRL_MID                              = 0x04,
+  AUDIO_FEATURE_UNIT_CTRL_TREBLE                           = 0x05,
+  AUDIO_FEATURE_UNIT_CTRL_GRAPHIC_EQ                       = 0x06,
+  AUDIO_FEATURE_UNIT_CTRL_AGC                              = 0x07,
+  AUDIO_FEATURE_UNIT_CTRL_DELAY                            = 0x08,
+  AUDIO_FEATURE_UNIT_CTRL_BASS_BOOST                       = 0x09,
+  AUDIO_FEATURE_UNIT_CTRL_LOUDNESS                         = 0x0a,
+}audio_feature_unit_ctrl_t;
+
+typedef enum
+{
+  AUDIO_EP_CTRL_SAMPLING_FREQ                              = 0x01,
+  AUDIO_EP_CTRL_PITCH                                      = 0x02,
+}audio_ep_ctrl_t;
+
+//--------------------------------------------------------------------+
 // Class Specific Functional Descriptor (Audio Interface)
 //--------------------------------------------------------------------+
 

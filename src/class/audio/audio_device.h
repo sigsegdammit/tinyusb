@@ -38,6 +38,10 @@
 #define CFG_TUD_AUDIO_EPSIZE 64
 #endif
 
+#ifndef CFG_TUD_AUDIO_EP_BUFSIZE
+  #define CFG_TUD_AUDIO_EP_BUFSIZE     (TUD_OPT_HIGH_SPEED ? 512 : 64)
+#endif
+
 #ifdef __cplusplus
  extern "C" {
 #endif
@@ -51,14 +55,21 @@
 // Application API (Multiple Ports)
 // CFG_TUD_AUDIO > 1
 //--------------------------------------------------------------------+
+bool tud_audio_n_write(uint8_t itf, void *buffer, uint32_t bufsize);
 
-//--------------------------------------------------------------------+
-// Application API (Single Port)
-//--------------------------------------------------------------------+
+uint32_t tud_cdc_n_write_available (uint8_t itf);
 
 //--------------------------------------------------------------------+
 // Application Callback API (weak is optional)
 //--------------------------------------------------------------------+
+TU_ATTR_WEAK bool tud_audio_ctrl_get_mute(uint8_t term_id, uint8_t chan_id, uint8_t *val, uint8_t *len );
+TU_ATTR_WEAK bool tud_audio_ctrl_set_mute(uint8_t term_id, uint8_t chan_id, const uint8_t *val, uint8_t len );
+
+TU_ATTR_WEAK bool tud_audio_ctrl_get_volume(uint8_t term_id, uint8_t chan_id, int16_t *val, uint8_t *len );
+TU_ATTR_WEAK bool tud_audio_ctrl_set_volume(uint8_t term_id, uint8_t chan_id, const int16_t *val, uint8_t len );
+
+TU_ATTR_WEAK bool tud_audio_ep_get_srate(uint8_t ep, uint32_t *val );
+TU_ATTR_WEAK bool tud_audio_ep_set_srate(uint8_t ep, const uint32_t val );
 
 //--------------------------------------------------------------------+
 // Inline Functions
