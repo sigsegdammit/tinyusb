@@ -55,21 +55,38 @@
 // Application API (Multiple Ports)
 // CFG_TUD_AUDIO > 1
 //--------------------------------------------------------------------+
-bool tud_audio_n_write(uint8_t itf, void *buffer, uint32_t bufsize);
+// Return true if an audio channel has been opened
+bool     tud_audio_n_open           (uint8_t itf);
 
-uint32_t tud_cdc_n_write_available (uint8_t itf);
+// Get the number of bytes available for reading
+uint32_t tud_audio_n_available       (uint8_t itf);
+
+// Read received bytes
+uint32_t tud_audio_n_read            (uint8_t itf, void* buffer, uint32_t bufsize);
+
+// Clear the interface FIFO
+void     tud_audio_n_flush           (uint8_t itf);
+
+// Write data to fifo, return bytes written
+uint32_t tud_audio_n_write           (uint8_t itf, void *buffer, uint32_t bufsize);
+
+// Return the number of bytes that can be written
+uint32_t tud_cdc_n_write_available   (uint8_t itf);
 
 //--------------------------------------------------------------------+
 // Application Callback API (weak is optional)
 //--------------------------------------------------------------------+
+TU_ATTR_WEAK void tud_audio_channel_open(uint8_t itf);
+TU_ATTR_WEAK void tud_audio_channel_close(uint8_t itf);
+
 TU_ATTR_WEAK bool tud_audio_ctrl_get_mute(uint8_t term_id, uint8_t chan_id, uint8_t *val, uint8_t *len );
-TU_ATTR_WEAK bool tud_audio_ctrl_set_mute(uint8_t term_id, uint8_t chan_id, const uint8_t *val, uint8_t len );
+TU_ATTR_WEAK void tud_audio_ctrl_set_mute(uint8_t term_id, uint8_t chan_id, const uint8_t *val, uint8_t len );
 
 TU_ATTR_WEAK bool tud_audio_ctrl_get_volume(uint8_t term_id, uint8_t chan_id, int16_t *val, uint8_t *len );
-TU_ATTR_WEAK bool tud_audio_ctrl_set_volume(uint8_t term_id, uint8_t chan_id, const int16_t *val, uint8_t len );
+TU_ATTR_WEAK void tud_audio_ctrl_set_volume(uint8_t term_id, uint8_t chan_id, const int16_t *val, uint8_t len );
 
 TU_ATTR_WEAK bool tud_audio_ep_get_srate(uint8_t ep, uint32_t *val );
-TU_ATTR_WEAK bool tud_audio_ep_set_srate(uint8_t ep, const uint32_t val );
+TU_ATTR_WEAK void tud_audio_ep_set_srate(uint8_t ep, const uint32_t val );
 
 //--------------------------------------------------------------------+
 // Inline Functions

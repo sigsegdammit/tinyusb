@@ -34,12 +34,6 @@
 #include "audio_device.h"
 #include "device/usbd_pvt.h"
 
-/* NOTES:
-  - I don't think we need both an in and out? Unless we enable sync?
-  - Should only need one fifo that is either fed by USB or fed by
-      i2s.
-*/
-
 //--------------------------------------------------------------------+
 // MACRO CONSTANT TYPEDEF
 //--------------------------------------------------------------------+
@@ -71,13 +65,26 @@ typedef struct
 CFG_TUSB_MEM_SECTION static audiod_interface_t _audiod_itf[CFG_TUD_AUDIO];
 CFG_TUSB_MEM_SECTION static uint8_t _audio_ctrl_data[16];
 
+static void _prep_out_transaction (uint8_t itf)
+{
+  audiod_interface_t* p_audio = &_audiod_itf[itf];
+
+  // skip if previous transfer not complete
+  if ( usbd_edpt_busy(TUD_OPT_RHPORT, p_audio->ep) ) return;
+
+  // Prepare for incoming data but only allow what we can store in the ring buffer.
+  uint16_t max_read = tu_fifo_remaining(&p_audio->fifo);
+  if ( max_read >= sizeof(p_audio->ep_buf) )
+  {
+    usbd_edpt_xfer(TUD_OPT_RHPORT, p_audio->ep, p_audio->ep_buf, sizeof(p_audio->ep_buf));
+  }
+}
+
 //--------------------------------------------------------------------+
 // Audio API
 //--------------------------------------------------------------------+
-static bool maybe_transmit(audiod_interface_t* audio, uint8_t itf_index)
+static bool maybe_transmit(audiod_interface_t* audio)
 {
-  (void) itf_index;
-
   // skip if previous transfer not complete
   TU_VERIFY( !usbd_edpt_busy(TUD_OPT_RHPORT, audio->ep) );
 
@@ -87,6 +94,48 @@ static bool maybe_transmit(audiod_interface_t* audio, uint8_t itf_index)
     TU_ASSERT( usbd_edpt_xfer(TUD_OPT_RHPORT, audio->ep, audio->ep_buf, count) );
   }
   return true;
+}
+
+//--------------------------------------------------------------------+
+// APPLICATION API
+//--------------------------------------------------------------------+
+bool tud_audio_n_open (uint8_t itf)
+{
+  return tud_ready() && (_audiod_itf[itf].itf_data_alt != 0);
+}
+
+uint32_t tud_audio_n_available (uint8_t itf)
+{
+  return tu_fifo_count(&_audiod_itf[itf].fifo);
+}
+
+uint32_t tud_audio_n_read (uint8_t itf, void* buffer, uint32_t bufsize)
+{
+  uint32_t num_read = tu_fifo_read_n(&_audiod_itf[itf].fifo, buffer, bufsize);
+  _prep_out_transaction(itf);
+  return num_read;
+}
+
+// Clear the interface FIFO
+void tud_audio_n_flush (uint8_t itf)
+{
+  tu_fifo_clear(&_audiod_itf[itf].fifo);
+  if (tu_edpt_dir(_audiod_itf[itf].ep) == TUSB_DIR_OUT)
+    _prep_out_transaction(itf);
+}
+
+// Write data to fifo, return bytes written
+uint32_t tud_audio_n_write (uint8_t itf, void *buffer, uint32_t bufsize)
+{
+  uint16_t ret = tu_fifo_write_n(&_audiod_itf[itf].fifo, buffer, bufsize);
+  maybe_transmit(&_audiod_itf[itf]);
+  return ret;
+}
+
+// Return the number of bytes that can be written
+uint32_t tud_cdc_n_write_available (uint8_t itf)
+{
+  return tu_fifo_remaining(&_audiod_itf[itf].fifo);
 }
 
 //--------------------------------------------------------------------+
@@ -268,7 +317,12 @@ bool audiod_control_request(uint8_t rhport, tusb_control_request_t const * reque
 
       // If the alt is 0, we are no longer rx/tx, so clear fifo
       if ( 0 == req_alt )
+      {
         tu_fifo_clear(&p_audio->fifo);
+        tud_audio_channel_close(req_itfnum);
+      }
+      else
+        tud_audio_channel_open(req_itfnum);
 
       return tud_control_status(rhport, request);
     }
@@ -398,7 +452,7 @@ bool audiod_xfer_cb(uint8_t rhport, uint8_t ep_addr, xfer_result_t result, uint3
     // prepare for next
     TU_ASSERT( usbd_edpt_xfer(rhport, p_audio->ep, p_audio->ep_buf, CFG_TUD_AUDIO_EP_BUFSIZE), false );
   } else {
-    maybe_transmit(p_audio, itf);
+    maybe_transmit(p_audio);
   }
 
   return true;
