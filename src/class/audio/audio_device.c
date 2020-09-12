@@ -53,7 +53,7 @@ typedef struct
 #endif
 
   // Endpoint Transfer buffer
-  CFG_TUSB_MEM_ALIGN uint8_t ep_buf[CFG_TUD_AUDIO_EPSIZE];
+  CFG_TUSB_MEM_ALIGN uint8_t ep_buf[CFG_TUD_AUDIO_EP_BUFSIZE];
 
 } audiod_interface_t;
 
@@ -88,11 +88,10 @@ static bool maybe_transmit(audiod_interface_t* audio)
   // skip if previous transfer not complete
   TU_VERIFY( !usbd_edpt_busy(TUD_OPT_RHPORT, audio->ep) );
 
-  uint16_t count = tu_fifo_read_n(&audio->fifo, audio->ep_buf, CFG_TUD_AUDIO_EP_BUFSIZE);
-  if (count > 0)
-  {
-    TU_ASSERT( usbd_edpt_xfer(TUD_OPT_RHPORT, audio->ep, audio->ep_buf, count) );
-  }
+  const uint16_t count = TU_MIN(tu_fifo_count(&audio->fifo), sizeof(audio->ep_buf));
+  tu_fifo_read_n(&audio->fifo, audio->ep_buf, count);
+  TU_ASSERT( usbd_edpt_xfer(TUD_OPT_RHPORT, audio->ep, audio->ep_buf, count) );
+
   return true;
 }
 
@@ -233,7 +232,7 @@ uint16_t audiod_open(uint8_t rhport, tusb_desc_interface_t const * desc_itf, uin
     p_audio->ep = ((tusb_desc_endpoint_t const *) p_desc)->bEndpointAddress;
 
     // Prepare for incoming data
-    if ( !usbd_edpt_xfer(rhport, p_audio->ep, p_audio->ep_buf, CFG_TUD_AUDIO_EP_BUFSIZE) )
+    if ( !usbd_edpt_xfer(rhport, p_audio->ep, p_audio->ep_buf, sizeof(p_audio->ep_buf)) )
     {
       TU_LOG1_FAILED();
       TU_BREAKPOINT();
@@ -447,10 +446,12 @@ bool audiod_xfer_cb(uint8_t rhport, uint8_t ep_addr, xfer_result_t result, uint3
   // receive new data
   if (tu_edpt_dir(ep_addr) == TUSB_DIR_OUT)
   {
-    tu_fifo_write_n(&p_audio->fifo, p_audio->ep_buf, xferred_bytes);
+    const uint32_t count = tu_fifo_write_n(&p_audio->fifo, p_audio->ep_buf, xferred_bytes);
+    if( count < xferred_bytes )
+      TU_LOG1( "Overflow: %u / %u\n", count, xferred_bytes );
 
     // prepare for next
-    TU_ASSERT( usbd_edpt_xfer(rhport, p_audio->ep, p_audio->ep_buf, CFG_TUD_AUDIO_EP_BUFSIZE), false );
+    TU_ASSERT( usbd_edpt_xfer(rhport, p_audio->ep, p_audio->ep_buf, sizeof(p_audio->ep_buf)), false );
   } else {
     maybe_transmit(p_audio);
   }

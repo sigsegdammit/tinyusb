@@ -34,12 +34,8 @@
 //--------------------------------------------------------------------+
 // Class Driver Configuration
 //--------------------------------------------------------------------+
-#ifndef CFG_TUD_AUDIO_EPSIZE
-#define CFG_TUD_AUDIO_EPSIZE 64
-#endif
-
 #ifndef CFG_TUD_AUDIO_EP_BUFSIZE
-  #define CFG_TUD_AUDIO_EP_BUFSIZE     (TUD_OPT_HIGH_SPEED ? 512 : 64)
+  #define CFG_TUD_AUDIO_EP_BUFSIZE     192
 #endif
 
 #ifdef __cplusplus

@@ -277,7 +277,7 @@ TU_ATTR_WEAK bool tud_vendor_control_complete_cb(uint8_t rhport, tusb_control_re
 	9, TUSB_DESC_CS_INTERFACE, AUDIO_CS_INTERFACE_OUTPUT_TERMINAL, _tid, U16_TO_U8S_LE(_type), 0, _sid, 0
 
 #define TUD_AUDIO_STREAMING_INTF_LEN (9 + 9 + 7 + 11 + 9 + 7)
-#define TUD_AUDIO_STREAMING_INTF(_itfnum, _stridx, _tid, _ch, _ep, _epsize) \
+#define TUD_AUDIO_STREAMING_INTF(_itfnum, _stridx, _tid, _ch, _ep) \
   /* Standard AS Interface - Alt 0*/\
   9, TUSB_DESC_INTERFACE, _itfnum, 0, 0, TUSB_CLASS_AUDIO, AUDIO_SUBCLASS_STREAMING, 0, _stridx, \
   /* Standard AS Interface - Alt 1*/\
@@ -287,7 +287,7 @@ TU_ATTR_WEAK bool tud_vendor_control_complete_cb(uint8_t rhport, tusb_control_re
   /* Type I format descriptor */\
   11, TUSB_DESC_CS_INTERFACE, 0x02, AUDIO_FORMAT_TYPE_I, _ch, 2, 16, 1, U24_TO_U8S_LE(48000),\
   /* Standard AS Iso */\
-  9, TUSB_DESC_ENDPOINT, _ep, TUSB_XFER_ISOCHRONOUS, U16_TO_U8S_LE(_epsize), 1, 0, 0x00,\
+  9, TUSB_DESC_ENDPOINT, _ep, TUSB_XFER_ISOCHRONOUS, U16_TO_U8S_LE(CFG_TUD_AUDIO_EP_BUFSIZE), 1, 0, 0x00,\
   /* Class Specific AS EP */\
   7, TUSB_DESC_CS_ENDPOINT, 0x01, 0, 0x01, U16_TO_U8S_LE(0x0001)
 
