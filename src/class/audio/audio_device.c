@@ -379,7 +379,7 @@ bool audiod_control_request(uint8_t rhport, tusb_control_request_t const * reque
       case AUDIO_REQUEST_GET_MINIMUM_VALUE:
         if ( ctrl_id == AUDIO_FEATURE_UNIT_CTRL_VOLUME )
         {
-          *(uint16_t *)_audio_ctrl_data = 0x8100;    // -127 db
+          *(uint16_t *)_audio_ctrl_data = 0;
           return tud_control_xfer(rhport, request, _audio_ctrl_data, 2);
         }
         break;
@@ -387,7 +387,7 @@ bool audiod_control_request(uint8_t rhport, tusb_control_request_t const * reque
       case AUDIO_REQUEST_GET_MAXIMUM_VALUE:
         if ( ctrl_id == AUDIO_FEATURE_UNIT_CTRL_VOLUME )
         {
-          *(uint16_t *)_audio_ctrl_data = 0x0400;    // +4 db
+          *(uint16_t *)_audio_ctrl_data = 127;
           return tud_control_xfer(rhport, request, _audio_ctrl_data, 2);
         }
         break;
@@ -395,7 +395,7 @@ bool audiod_control_request(uint8_t rhport, tusb_control_request_t const * reque
       case AUDIO_REQUEST_GET_RESOLUTION_VALUE:
         if ( ctrl_id == AUDIO_FEATURE_UNIT_CTRL_VOLUME )
         {
-          *(uint16_t *)_audio_ctrl_data = 0x0100;    // 1 db steps
+          *(uint16_t *)_audio_ctrl_data = 1;
           return tud_control_xfer(rhport, request, _audio_ctrl_data, 2);
         }
         break;
