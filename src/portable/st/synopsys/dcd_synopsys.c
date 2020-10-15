@@ -284,11 +284,13 @@ static void set_speed(uint8_t rhport, tusb_speed_t speed)
 {
   uint32_t bitvalue;
 
+#if 0 // FIXME
   if ( rhport == 1 )
   {
     bitvalue = ((TUSB_SPEED_HIGH == speed) ? DCD_HIGH_SPEED : DCD_FULL_SPEED_USE_HS);
   }
   else
+#endif
   {
     bitvalue = DCD_FULL_SPEED;
   }
@@ -389,6 +391,7 @@ void dcd_init (uint8_t rhport)
 
   USB_OTG_GlobalTypeDef * usb_otg = GLOBAL_BASE(rhport);
 
+#if 0       // FIXME
   // No HNP/SRP (no OTG support), program timeout later.
   if ( rhport == 1 )
   {
@@ -414,6 +417,7 @@ void dcd_init (uint8_t rhport)
     USB_HS_PHYCInit();
 #endif
   } else
+#endif
   {
     // Enable internal PHY
     usb_otg->GUSBCFG |= USB_OTG_GUSBCFG_PHYSEL;
@@ -445,7 +449,8 @@ void dcd_init (uint8_t rhport)
   set_speed(rhport, TUD_OPT_HIGH_SPEED ? TUSB_SPEED_HIGH : TUSB_SPEED_FULL);
 
   // Enable internal USB transceiver.
-  if ( rhport == 0 ) usb_otg->GCCFG |= USB_OTG_GCCFG_PWRDWN;
+// FIXME  if ( rhport == 0 ) usb_otg->GCCFG |= USB_OTG_GCCFG_PWRDWN;
+  usb_otg->GCCFG |= USB_OTG_GCCFG_PWRDWN;
 
   usb_otg->GINTMSK |= USB_OTG_GINTMSK_USBRST   | USB_OTG_GINTMSK_ENUMDNEM |
                       USB_OTG_GINTMSK_USBSUSPM | USB_OTG_GINTMSK_WUIM     |
@@ -515,7 +520,7 @@ bool dcd_edpt_open (uint8_t rhport, tusb_desc_endpoint_t const * desc_edpt)
   TU_ASSERT(epnum < EP_MAX);
 
   // TODO ISO endpoint can be up to 1024 bytes
-  TU_ASSERT(desc_edpt->wMaxPacketSize.size <= (get_speed(rhport) == TUSB_SPEED_HIGH ? 512 : 64));
+//  TU_ASSERT(desc_edpt->wMaxPacketSize.size <= (get_speed(rhport) == TUSB_SPEED_HIGH ? 512 : 64));
 
   xfer_ctl_t * xfer = XFER_CTL_BASE(epnum, dir);
   xfer->max_size = desc_edpt->wMaxPacketSize.size;
