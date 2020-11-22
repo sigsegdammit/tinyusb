@@ -47,10 +47,10 @@
 #define U16_TO_U8S_BE(u16)    TU_U16_HIGH(u16), TU_U16_LOW(u16)
 #define U16_TO_U8S_LE(u16)    TU_U16_LOW(u16), TU_U16_HIGH(u16)
 
-#define U32_B1_U8(u32)        ((uint8_t) (((u32) >> 24) & 0x000000ff)) // MSB
-#define U32_B2_U8(u32)        ((uint8_t) (((u32) >> 16) & 0x000000ff))
-#define U32_B3_U8(u32)        ((uint8_t) (((u32) >>  8) & 0x000000ff))
-#define U32_B4_U8(u32)        ((uint8_t) ((u32)         & 0x000000ff)) // LSB
+#define U32_B1_U8(u32)        ((uint8_t) ((((uint32_t) u32) >> 24) & 0x000000ff)) // MSB
+#define U32_B2_U8(u32)        ((uint8_t) ((((uint32_t) u32) >> 16) & 0x000000ff))
+#define U32_B3_U8(u32)        ((uint8_t) ((((uint32_t) u32) >>  8) & 0x000000ff))
+#define U32_B4_U8(u32)        ((uint8_t) (((uint32_t)  u32)        & 0x000000ff)) // LSB
 
 #define U24_TO_U8S_BE(u32)    U32_B1_U8(u32), U32_B2_U8(u32), U32_B3_U8(u32)
 #define U24_TO_U8S_LE(u32)    U32_B4_U8(u32), U32_B3_U8(u32), U32_B2_U8(u32)
@@ -216,7 +216,7 @@ static inline bool     tu_bit_test (uint32_t value, uint8_t pos) { return (value
 // 2 : print out log
 #if CFG_TUSB_DEBUG
 
-void tu_print_mem(void const *buf, uint16_t count, uint8_t indent);
+void tu_print_mem(void const *buf, uint32_t count, uint8_t indent);
 
 #ifdef CFG_TUSB_DEBUG_PRINTF
   extern int CFG_TUSB_DEBUG_PRINTF(const char *format, ...);
@@ -254,16 +254,16 @@ void tu_print_var(uint8_t const* buf, uint32_t bufsize)
 typedef struct
 {
   uint32_t key;
-  char const * data;
-}lookup_entry_t;
+  const char* data;
+} tu_lookup_entry_t;
 
 typedef struct
 {
   uint16_t count;
-  lookup_entry_t const* items;
-} lookup_table_t;
+  tu_lookup_entry_t const* items;
+} tu_lookup_table_t;
 
-static inline char const* lookup_find(lookup_table_t const* p_table, uint32_t key)
+static inline const char* tu_lookup_find(tu_lookup_table_t const* p_table, uint32_t key)
 {
   for(uint16_t i=0; i<p_table->count; i++)
   {

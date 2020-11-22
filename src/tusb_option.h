@@ -28,7 +28,7 @@
 #define _TUSB_OPTION_H_
 
 #define TUSB_VERSION_MAJOR     0
-#define TUSB_VERSION_MINOR     5
+#define TUSB_VERSION_MINOR     7
 #define TUSB_VERSION_REVISION  0
 #define TUSB_VERSION_STRING    TU_STRING(TUSB_VERSION_MAJOR) "." TU_STRING(TUSB_VERSION_MINOR) "." TU_STRING(TUSB_VERSION_REVISION)
 
@@ -55,10 +55,11 @@
 #define OPT_MCU_NRF5X             100 ///< Nordic nRF5x series
 
 // SAM
+#define OPT_MCU_SAMD11            204 ///< MicroChip SAMD11
 #define OPT_MCU_SAMD21            200 ///< MicroChip SAMD21
 #define OPT_MCU_SAMD51            201 ///< MicroChip SAMD51
-#define OPT_MCU_SAMG              202 ///< MicroChip SAMDG series
 #define OPT_MCU_SAME5X            203 ///< MicroChip SAM E5x
+#define OPT_MCU_SAMG              202 ///< MicroChip SAMDG series
 
 // STM32
 #define OPT_MCU_STM32F0           300 ///< ST STM32F0
@@ -109,11 +110,13 @@
 
 
 // Allow to use command line to change the config name/location
-#ifndef CFG_TUSB_CONFIG_FILE
-  #define CFG_TUSB_CONFIG_FILE "tusb_config.h"
+#ifdef CFG_TUSB_CONFIG_FILE
+  #include CFG_TUSB_CONFIG_FILE
+#else
+  #include "tusb_config.h"
 #endif
 
-#include CFG_TUSB_CONFIG_FILE
+
 
 /** \addtogroup group_configuration
  *  @{ */
@@ -194,10 +197,6 @@
   #define CFG_TUD_ENDPOINT0_SIZE  64
 #endif
 
-#ifndef CFG_TUD_AUDIO
-  #define CFG_TUD_AUDIO           0
-#endif
-
 #ifndef CFG_TUD_CDC
   #define CFG_TUD_CDC             0
 #endif
@@ -208,6 +207,10 @@
 
 #ifndef CFG_TUD_HID
   #define CFG_TUD_HID             0
+#endif
+
+#ifndef CFG_TUD_AUDIO
+  #define CFG_TUD_AUDIO           0
 #endif
 
 #ifndef CFG_TUD_MIDI

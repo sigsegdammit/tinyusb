@@ -29,6 +29,7 @@
 
 #include "common/tusb_common.h"
 #include "device/usbd.h"
+
 #include "audio.h"
 
 //--------------------------------------------------------------------+
@@ -39,7 +40,7 @@
 #endif
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 /** \addtogroup Audio
