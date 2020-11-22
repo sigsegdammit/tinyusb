@@ -67,6 +67,7 @@ typedef enum
 typedef enum
 {
   AUDIO_INT_PROTOCOL_CODE_UNDEF       = 0x00,
+  AUDIO_INT_PROTOCOL_CODE_V1          = 0x00, ///< Version 1.0
   AUDIO_INT_PROTOCOL_CODE_V2          = 0x20, ///< Version 2.0
 } audio_interface_protocol_code_t;
 
@@ -88,6 +89,74 @@ typedef enum
   AUDIO_FUNC_CONTROL_PANEL      = 0x0C,
   AUDIO_FUNC_OTHER              = 0xFF,
 } audio_function_code_t;
+
+/***************************************************
+ *UAC 1.0 defines, until we update to 2.0, or formalize
+ * these
+ ***************************************************/
+/// Audio Class USB Terminal Types
+typedef enum{
+  AUDIO_USB_TERMINAL_STREAMING             = 0x0101,
+  AUDIO_USB_TERMINAL_VENDOR_SPECIFIC       = 0x01FF,
+  AUDIO_INPUT_TERMINAL_MICROPHONE          = 0x0201,
+  AUDIO_INPUT_TERMINAL_DESKTOP_MICROPHONE  = 0x0202,
+  AUDIO_INPUT_TERMINAL_PERSONAL_MICROPHONE = 0x0203,
+  AUDIO_INPUT_TERMINAL_OMNI_MICROPHONE     = 0x0204,
+  AUDIO_INPUT_TERMINAL_ARRAY_MICROPHONE    = 0x0205,
+  AUDIO_INPUT_TERMINAL_PROC_ARRAY_MICROPHONE  = 0x0206,
+  AUDIO_OUTPUT_TERMINAL_SPEAKER            = 0x0301,
+  AUDIO_OUTPUT_TERMINAL_HEADPHONES         = 0x0302,
+  AUDIO_OUTPUT_TERMINAL_HEADSUP_DISPLAY    = 0x0303,
+  AUDIO_OUTPUT_TERMINAL_DESKTOP_SPEAKER    = 0x0304,
+  AUDIO_OUTPUT_TERMINAL_ROOM_SPEAKER       = 0x0305,
+  AUDIO_OUTPUT_TERMINAL_COMM_SPEAKER       = 0x0306,
+  AUDIO_OUTPUT_TERMINAL_LFE_SPEAKER        = 0x0307,
+  //... More to do
+} audio_input_terminal_type_t;
+
+typedef enum
+{
+  AUDIO_REQUEST_SET_CURRENT_VALUE                          = 0x01,
+  AUDIO_REQUEST_GET_CURRENT_VALUE                          = 0x81,
+
+  AUDIO_REQUEST_SET_MINIMUM_VALUE                          = 0x02,
+  AUDIO_REQUEST_GET_MINIMUM_VALUE                          = 0x82,
+
+  AUDIO_REQUEST_SET_MAXIMUM_VALUE                          = 0x03,
+  AUDIO_REQUEST_GET_MAXIMUM_VALUE                          = 0x83,
+
+  AUDIO_REQUEST_SET_RESOLUTION_VALUE                       = 0x04,
+  AUDIO_REQUEST_GET_RESOLUTION_VALUE                       = 0x84,
+
+  AUDIO_REQUEST_SET_MEM_VALUE                              = 0x05,
+  AUDIO_REQUEST_GET_MEM_VALUE                              = 0x85,
+
+  AUDIO_REQUEST_GET_STAT                                   = 0xff,
+}audio_management_request_t;
+
+/// Audio feture unit controls
+typedef enum
+{
+  AUDIO_FEATURE_UNIT_CTRL_MUTE                             = 0x01,
+  AUDIO_FEATURE_UNIT_CTRL_VOLUME                           = 0x02,
+  AUDIO_FEATURE_UNIT_CTRL_BASS                             = 0x03,
+  AUDIO_FEATURE_UNIT_CTRL_MID                              = 0x04,
+  AUDIO_FEATURE_UNIT_CTRL_TREBLE                           = 0x05,
+  AUDIO_FEATURE_UNIT_CTRL_GRAPHIC_EQ                       = 0x06,
+  AUDIO_FEATURE_UNIT_CTRL_AGC                              = 0x07,
+  AUDIO_FEATURE_UNIT_CTRL_DELAY                            = 0x08,
+  AUDIO_FEATURE_UNIT_CTRL_BASS_BOOST                       = 0x09,
+  AUDIO_FEATURE_UNIT_CTRL_LOUDNESS                         = 0x0a,
+}audio_feature_unit_ctrl_t;
+
+typedef enum
+{
+  AUDIO_EP_CTRL_SAMPLING_FREQ                              = 0x01,
+}audio_ep_ctrl_t;
+
+/***************************************************
+ * End UAC1.0 defines
+ ***************************************************/
 
 /// A.9 - Audio Class-Specific AC Interface Descriptor Subtypes UAC2
 typedef enum
