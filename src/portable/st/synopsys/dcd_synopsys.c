@@ -219,6 +219,8 @@ static void bus_reset(uint8_t rhport)
 
 #if TUD_OPT_HIGH_SPEED
   _allocated_fifo_words = 271 + 2*EP_MAX;
+#elif CFG_TUD_AUDIO
+  _allocated_fifo_words = 143 + 2*EP_MAX;
 #else
   _allocated_fifo_words =  47 + 2*EP_MAX;
 #endif
